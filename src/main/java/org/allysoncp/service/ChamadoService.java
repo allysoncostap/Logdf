@@ -1,5 +1,7 @@
 package org.allysoncp.service;
 
+import jakarta.annotation.PostConstruct;
+import jakarta.transaction.Transactional;
 import org.allysoncp.entity.Chamado;
 import org.allysoncp.entity.Status;
 import org.allysoncp.entity.Usuario;
@@ -7,11 +9,18 @@ import org.allysoncp.repositories.ChamadoRepository;
 import org.allysoncp.repositories.UsuarioRepository;
 import org.allysoncp.service.exceptions.ObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class ChamadoService {
@@ -60,6 +69,11 @@ public class ChamadoService {
 
     }
 
+    public List<Chamado> findAllT() {
+        return chamadoRepository.findAll();
+    }
+
+
     public void delete(Integer id) {
         Chamado obj = findById(id);
         chamadoRepository.delete(obj);
@@ -81,7 +95,7 @@ public class ChamadoService {
         newObj.setStatus(obj.getStatus());
         newObj.setFilas(obj.getFilas());
         newObj.setDescricao(obj.getDescricao());
-        newObj.setDate(obj.getDate());
+
 
         // Verifica se o campo de usuário não é nulo e se tem um ID válido
         if (obj.getUsuario() != null && obj.getUsuario().getId() != null) {
@@ -96,6 +110,44 @@ public class ChamadoService {
                 // Se o usuário não for encontrado, lança uma exceção ou trata de outra forma apropriada
                 throw new RuntimeException("Usuário com ID " + obj.getUsuario().getId() + " não encontrado.");
             }
+        }
+    }
+
+
+
+
+    @Bean
+    public void iniciarAtualizacaoStatusChamados() {
+        try {
+            ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+            scheduler.scheduleAtFixedRate(() -> {
+                try {
+                    System.out.println("Iniciando atualização de status de chamados...");
+
+                    List<Chamado> chamados = chamadoRepository.findByStatus(Status.ABERTO);
+                    LocalDateTime now = LocalDateTime.now(); // Obtenha o tempo atual apenas uma vez para garantir consistência
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss dd/MM/yyyy");
+                    for (Chamado chamado : chamados) {
+                        LocalDateTime chamadoDate = LocalDateTime.parse(chamado.getDataFormatada(), formatter);
+                        Duration tempoDecorrido = Duration.between(chamadoDate, now);
+                        if (tempoDecorrido.toMinutes() > 1) {
+                            try {
+                                chamado.setStatus(Status.VENCIDO);
+                                chamadoRepository.save(chamado);
+                            } catch (Exception e) {
+                                // Lidere com a exceção aqui
+                                e.printStackTrace(); // Apenas um exemplo, você pode tratar a exceção de acordo com a sua lógica
+                            }
+                        }
+                    }
+                } catch (Exception e) {
+                    // Lidere com a exceção aqui
+                    e.printStackTrace(); // Apenas um exemplo, você pode tratar a exceção de acordo com a sua lógica
+                }
+            }, 0, 1, TimeUnit.MINUTES); // Verificar a cada minuto
+        } catch (Exception e) {
+            // Lidere com a exceção aqui
+            e.printStackTrace(); // Apenas um exemplo, você pode tratar a exceção de acordo com a sua lógica
         }
     }
 }

@@ -5,31 +5,28 @@ import org.allysoncp.entity.Filas;
 import org.allysoncp.entity.Status;
 
 import java.io.Serializable;
-import java.util.Date;
 
 public class IntroChamadoDtos implements Serializable {
 
-    private  static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-private Integer id;
-private Status status;
- private Filas filas;
- 
- private Date date;
+    private Integer id;
+    private Status status;
+    private Filas filas;
 
+    // Alterado o tipo para manter a informação do tempo
+    private String date;
 
     public IntroChamadoDtos() {
     }
 
     public IntroChamadoDtos(Chamado obj) {
-        this.id =obj.getId();
-        this.status = obj.getStatus();
-        this.filas = obj.getFilas();
+        this.id= obj.getId();
         this.date = obj.getDate();
+        this.filas = obj.getFilas();
+        this.status = obj.getStatus();
+
     }
-
-
-
     public Integer getId() {
         return id;
     }
@@ -54,11 +51,11 @@ private Status status;
         this.filas = filas;
     }
 
-    public Date getDate() {
+    public String getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(String date) {
         this.date = date;
     }
 }

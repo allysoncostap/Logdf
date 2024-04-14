@@ -10,7 +10,11 @@ import org.allysoncp.repositories.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.sql.Date;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
+import java.util.Calendar;
+import java.util.Date;
 
 import static java.util.Arrays.asList;
 @Service
@@ -32,15 +36,16 @@ public class DBService {
     Usuario usuario5 = new Usuario(null, "Carlos Silva", "carlos@example.com", "333333333", "Edifício B", "Sala 201", 2, true, Filas.PRESENCIAL);
     Usuario usuario6 = new Usuario(null, "Mariana Oliveira", "mariana@example.com", "444444444", "Edifício C", "Sala 304", 3, true, Filas.COORDENACAO);
 
-    Chamado chamado1 = new Chamado(null, Status.ABERTO, Date.valueOf("2024-03-18"), usuario1, "Problema com o computador", Filas.NIVEL1);
-    Chamado chamado2 = new Chamado(null, Status.FECHADO, Date.valueOf("2024-03-17"), usuario2, "Solicitação de suporte técnico", Filas.NIVEL3);
-    Chamado chamado3 = new Chamado(null, Status.SUSPENSO, Date.valueOf("2024-03-16"), usuario3, "Dúvida sobre software", Filas.NIVEL2);
-    Chamado chamado4 = new Chamado(null, Status.FECHADO, Date.valueOf("2024-03-15"), usuario4, "Atualização de software", Filas.NIVEL1);
-    Chamado chamado5 = new Chamado(null, Status.ABERTO, Date.valueOf("2024-03-14"), usuario5, "Problema de conexão de rede", Filas.NIVEL2);
-    Chamado chamado6 = new Chamado(null, Status.EM_ANDAMENTO, Date.valueOf("2024-03-13"), usuario1, "Consulta sobre políticas internas", Filas.NIVEL3);
-    Chamado chamado7 = new Chamado(null, Status.FECHADO, Date.valueOf("2024-03-12"), usuario1, "Instalação de novo software", Filas.NIVEL1);
-    Chamado chamado8 = new Chamado(null, Status.ABERTO, Date.valueOf("2024-03-11"), usuario2, "Problema de impressão", Filas.NIVEL3);
-    Chamado chamado9 = new Chamado(null, Status.EM_ANDAMENTO, Date.valueOf("2024-03-10"), usuario3, "Solicitação de treinamento", Filas.NIVEL1);
+    Chamado chamado1 = new Chamado(null, Status.VENCIDO, LocalDateTime.now() , usuario1, "Problema com o computador", Filas.NIVEL1);
+
+    Chamado chamado2 = new Chamado(null, Status.VENCIDO,LocalDateTime.now(), usuario2, "Solicitação de suporte técnico", Filas.NIVEL3);
+    Chamado chamado3 = new Chamado(null, Status.SUSPENSO,LocalDateTime.now(), usuario3, "Dúvida sobre software", Filas.NIVEL2);
+    Chamado chamado4 = new Chamado(null, Status.FECHADO,LocalDateTime.now(), usuario4, "Atualização de software", Filas.NIVEL1);
+    Chamado chamado5 = new Chamado(null, Status.ABERTO,LocalDateTime.now(), usuario5, "Problema de conexão de rede", Filas.NIVEL2);
+    Chamado chamado6 = new Chamado(null, Status.EM_ANDAMENTO, LocalDateTime.now(), usuario1, "Consulta sobre políticas internas", Filas.NIVEL3);
+    Chamado chamado7 = new Chamado(null, Status.FECHADO,LocalDateTime.now(), usuario1, "Instalação de novo software", Filas.NIVEL1);
+    Chamado chamado8 = new Chamado(null, Status.ABERTO, LocalDateTime.now(), usuario2, "Problema de impressão", Filas.NIVEL3);
+    Chamado chamado9 = new Chamado(null, Status.EM_ANDAMENTO, LocalDateTime.now(), usuario3, "Solicitação de treinamento", Filas.NIVEL1);
 
 
 

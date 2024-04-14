@@ -1,16 +1,12 @@
 package org.allysoncp.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
-import java.io.Serial;
-import java.io.Serializable;
-import java.util.Date;
-@Entity
-public class Chamado implements Serializable {
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
-    private static final long serialVersionUID = 1L;
+@Entity
+public class Chamado {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,8 +15,7 @@ public class Chamado implements Serializable {
     @Enumerated(EnumType.STRING)
     private Status status;
 
-    private Date date;
-
+    private LocalDateTime date;
 
     @ManyToOne
     @JoinColumn(name = "usuario_id")
@@ -31,27 +26,35 @@ public class Chamado implements Serializable {
     @Enumerated(EnumType.STRING)
     private Filas filas;
 
-
     public Chamado() {
+        this.date = LocalDateTime.now();
     }
 
-    public Chamado(Integer id, Status status, Date date, Usuario usuario, String descricao, Filas filas) {
+    public Chamado(Integer id, Status status, LocalDateTime date, Usuario usuario, String descricao, Filas filas) {
         this.id = id;
         this.status = status;
-        this.date = date;
+        this.date =date ;
         this.usuario = usuario;
         this.descricao = descricao;
         this.filas = filas;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    // Método para formatar a data
+    public String getDataFormatada() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss " +
+                "dd/MM/yyyy");
+        return date.format(formatter);
     }
 
-    public int getId() {
+    // Getters e setters...
+
+    public Integer getId() {
         return id;
     }
 
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
     public Status getStatus() {
         return status;
@@ -61,11 +64,18 @@ public class Chamado implements Serializable {
         this.status = status;
     }
 
-    public Date getDate() {
-        return date;
+    public String getDate() {
+        // Verifique se this.date não é nulo antes de chamar o método format()
+        if (this.date != null) {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss yyyy-MM-dd ");
+            return this.date.format(formatter);
+        } else {
+            // Trate o caso em que this.date é nulo
+            return "Data não disponível";
+        }
     }
 
-    public void setDate(Date date) {
+    public void setDate(LocalDateTime date) {
         this.date = date;
     }
 
@@ -92,6 +102,4 @@ public class Chamado implements Serializable {
     public void setFilas(Filas filas) {
         this.filas = filas;
     }
-
-
 }

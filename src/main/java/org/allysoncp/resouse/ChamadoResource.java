@@ -1,17 +1,25 @@
 package org.allysoncp.resouse;
 
+import jakarta.annotation.PostConstruct;
+import jakarta.transaction.Transactional;
 import org.allysoncp.dtos.IntroChamadoDtos;
 import org.allysoncp.entity.Chamado;
 import org.allysoncp.entity.Status;
 import org.allysoncp.service.ChamadoService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.awt.*;
 import java.net.URI;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @RestController
@@ -26,7 +34,7 @@ public class ChamadoResource {
         Chamado obj = chamadoService.findById(id);
         return  ResponseEntity.ok().body(obj);
     }
-
+    @CrossOrigin(origins = "http://localhost:4200")
     @GetMapping("/status/{status}")
     public ResponseEntity<List<Chamado>> encontrarChamadosPorStatus(@PathVariable String status) {
         Status statusEnum = Status.valueOf(status.toUpperCase()); // Converte a string para o enum Status
@@ -38,6 +46,14 @@ public class ChamadoResource {
     List<Chamado> list = chamadoService.findAll(id_User);
     List<IntroChamadoDtos>listDTO= list.stream().map(IntroChamadoDtos::new).collect(Collectors.toList());
 return  ResponseEntity.ok().body(listDTO);}
+    @CrossOrigin(origins = "http://localhost:4200")
+    @GetMapping("/todos")
+    public ResponseEntity<List<IntroChamadoDtos>> findAllT(){
+List<Chamado> list= chamadoService.findAllT();
+List<IntroChamadoDtos>listDTO = list.stream().map(obj -> new IntroChamadoDtos(obj)).collect(Collectors.toList());
+   return ResponseEntity.ok().body(listDTO);
+    }
+
 
 
 
